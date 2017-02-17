@@ -1,0 +1,16 @@
+{
+  "name": "image",
+  "version": "1.0.0",
+  "description": "image manipulation application",
+  "main": "image.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mohamed El-Sabagh",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^1.0.0",
+    "gm": "^1.23.0",
+    "prompt": "^1.0.0"
+  }
+}
