@@ -1,7 +1,6 @@
 #!/usr/bin/node
 
 var gm;
-var fse = require('fs-extra');
 var fs = require('fs');
 var path = require('path');
 var prompt = require('prompt');
