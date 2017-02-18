@@ -1,5 +1,9 @@
 /node_modules
 /*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.svg
 /drawable-xxxhdpi/*
 /drawable-xxhdpi/*
 /drawable-xhdpi/*
