@@ -5,7 +5,9 @@ This repository contains a node js script which help smart phone developers to c
 ---
 Before starting you must install node on your machine.
 
-This procedures was tested over an ubuntu machine
+This procedures was tested over an ubuntu machine.
+
+You should add the required images to be resized on the root project folder.
 
 * ###### Install required packages & dependencies ######
 Go to the project root folder and run the following command
