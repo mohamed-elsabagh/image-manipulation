@@ -1,2 +1,7 @@
 /node_modules
 /*.png
+/drawable-xxxhdpi/*
+/drawable-xxhdpi/*
+/drawable-xhdpi/*
+/drawable-hdpi/*
+/drawable-mdpi/*

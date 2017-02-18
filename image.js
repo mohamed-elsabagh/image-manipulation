@@ -1,13 +1,42 @@
 #!/usr/bin/node
 
-const gm = require('gm');
-const fse = require('fs-extra');
-const path = require('path');
-const prompt = require('prompt');
-const constants = require('./constants');
+var gm;
+var fse = require('fs-extra');
+var fs = require('fs');
+var path = require('path');
+var prompt = require('prompt');
+var constants = require('./constants');
+if (constants.useImagemagick) {
+    gm = require('gm');
+} else {
+    gm = require('gm').subClass({
+        imageMagick: true
+    });
+}
 
-const imageName = 'ic_support';
-const extension = '.png';
+const xxxhdpiDir = './drawable-xxxhdpi';
+const xxhdpiDir = './drawable-xxhdpi';
+const xhdpiDir = './drawable-xhdpi';
+const hdpiDir = './drawable-hdpi';
+const mdpiDir = './drawable-mdpi';
+if (!fs.existsSync(xxxhdpiDir)) {
+    fs.mkdirSync(xxxhdpiDir);
+}
+if (!fs.existsSync(xxhdpiDir)) {
+    fs.mkdirSync(xxhdpiDir);
+}
+if (!fs.existsSync(xhdpiDir)) {
+    fs.mkdirSync(xhdpiDir);
+}
+if (!fs.existsSync(hdpiDir)) {
+    fs.mkdirSync(hdpiDir);
+}
+if (!fs.existsSync(mdpiDir)) {
+    fs.mkdirSync(mdpiDir);
+}
+
+var imageName = 'ic_support';
+var extension = '.png';
 
 console.log('***********************************************');
 console.log('******* This is example of input format *******');
@@ -85,9 +114,10 @@ prompt.get([{
 
     const fileName = path.join(__dirname, result.imageName + result.extension);
 
-
+    var xxxhdpiWriteDir = path.join(__dirname, xxxhdpiDir);
+    xxxhdpiWriteDir = path.join(xxxhdpiWriteDir, result.imageName + result.extension);
     gm(fileName).resize(result.xxxhdpiSize, result.xxxhdpiSize).noProfile()
-        .write(fileName + 'xxxhdpi' + result.extension, function(err) {
+        .write(xxxhdpiWriteDir, function(err) {
             if (!err) {
                 console.log('Success');
             } else {
@@ -95,8 +125,10 @@ prompt.get([{
             };
         });
 
+    var xxhdpiWriteDir = path.join(__dirname, xxhdpiDir);
+    xxhdpiWriteDir = path.join(xxhdpiWriteDir, result.imageName + result.extension);
     gm(fileName).resize(result.xxhdpiSize, result.xxhdpiSize).noProfile()
-        .write(fileName + 'xxhdpi' + result.extension, function(err) {
+        .write(xxhdpiWriteDir, function(err) {
             if (!err) {
                 console.log('Success');
             } else {
@@ -104,8 +136,10 @@ prompt.get([{
             };
         });
 
+    var xhdpiWriteDir = path.join(__dirname, xhdpiDir);
+    xhdpiWriteDir = path.join(xhdpiWriteDir, result.imageName + result.extension);
     gm(fileName).resize(result.xhdpiSize, result.xhdpiSize).noProfile()
-        .write(fileName + 'xhdpi' + result.extension, function(err) {
+        .write(xhdpiWriteDir, function(err) {
             if (!err) {
                 console.log('Success');
             } else {
@@ -113,8 +147,10 @@ prompt.get([{
             };
         });
 
+    var hdpiWriteDir = path.join(__dirname, hdpiDir);
+    hdpiWriteDir = path.join(hdpiWriteDir, result.imageName + result.extension);
     gm(fileName).resize(result.hdpiSize, result.hdpiSize).noProfile()
-        .write(fileName + 'hdpi' + result.extension, function(err) {
+        .write(hdpiWriteDir, function(err) {
             if (!err) {
                 console.log('Success');
             } else {
@@ -122,8 +158,10 @@ prompt.get([{
             };
         });
 
+    var mdpiWriteDir = path.join(__dirname, mdpiDir);
+    mdpiWriteDir = path.join(mdpiWriteDir, result.imageName + result.extension);
     gm(fileName).resize(result.mdpiSize, result.mdpiSize).noProfile()
-        .write(fileName + 'mdpi' + result.extension, function(err) {
+        .write(mdpiWriteDir, function(err) {
             if (!err) {
                 console.log('Success');
             } else {

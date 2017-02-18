@@ -4,6 +4,7 @@ const defaultXhdpi = 250;
 const defaultHdpi = 187;
 const defaultMdpi = 125;
 const defaultExtension = '.png';
+const useImagemagick = false;
 
 module.exports = {
     defaultXxxhdpi: defaultXxxhdpi,
@@ -11,5 +12,6 @@ module.exports = {
     defaultXhdpi: defaultXhdpi,
     defaultHdpi: defaultHdpi,
     defaultMdpi: defaultMdpi,
-    defaultExtension: defaultExtension
+    defaultExtension: defaultExtension,
+    useImagemagick: useImagemagick
 };
