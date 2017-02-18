@@ -17,4 +17,5 @@ Go to the project root folder and run the following command
 To clean and remove any old build run ```./build.sh clean```
 
 ### Launch the script ###
+---
 To launch the script run ```./build.sh run```
