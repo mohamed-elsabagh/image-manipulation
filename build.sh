@@ -3,7 +3,7 @@
 PROJECT_HOME=$(pwd)
 
 function help {
-	echo "Choose one of the following: {install|clean}"
+	echo "Choose one of the following: {install|clean|run}"
 	exit 1
 }
 
