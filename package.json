@@ -9,6 +9,7 @@
   "author": "Mohamed El-Sabagh",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.1.5",
     "gm": "^1.23.0",
     "prompt": "^1.0.0"
   }

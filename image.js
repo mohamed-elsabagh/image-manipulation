@@ -5,6 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var prompt = require('prompt');
 var constants = require('./constants');
+var async = require('async');
 if (constants.useImagemagick) {
     gm = require('gm');
 } else {
@@ -18,6 +19,9 @@ const xxhdpiDir = './drawable-xxhdpi';
 const xhdpiDir = './drawable-xhdpi';
 const hdpiDir = './drawable-hdpi';
 const mdpiDir = './drawable-mdpi';
+const imagesDir = './images/';
+
+// Create folders if not exist before
 if (!fs.existsSync(xxxhdpiDir)) {
     fs.mkdirSync(xxxhdpiDir);
 }
@@ -33,6 +37,9 @@ if (!fs.existsSync(hdpiDir)) {
 if (!fs.existsSync(mdpiDir)) {
     fs.mkdirSync(mdpiDir);
 }
+if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir);
+}
 
 var imageName = 'ic_support';
 var extension = '.png';
@@ -40,7 +47,7 @@ var extension = '.png';
 console.log('***********************************************');
 console.log('******* This is example of input format *******');
 console.log('***********************************************');
-console.log('imageName = ic_support');
+console.log('imageName = ic_support     hint: if you leave the image name empty all images in the folder will be converted');
 console.log('extension = .png');
 console.log('xxxhdpiSize = 500');
 console.log('xxhdpiSize = 375');
@@ -48,6 +55,7 @@ console.log('xhdpiSize = 250');
 console.log('hdpiSize = 187');
 console.log('mdpiSize = 125');
 
+var finalResult;
 //
 // Start the prompt
 //
@@ -58,7 +66,7 @@ prompt.start();
 //
 prompt.get([{
     name: 'imageName',
-    required: true
+    required: false
 }, {
     name: 'extension',
     required: false
@@ -81,6 +89,10 @@ prompt.get([{
     //
     // Log the results.
     //
+    if (result.imageName == null || result.imageName === '') {
+        console.log('All images in the folder will be converted');
+    }
+
     if (result.extension == null || result.extension === '') {
         console.log('default extension will be used ' + constants.defaultExtension);
         result.extension = constants.defaultExtension;
@@ -111,60 +123,86 @@ prompt.get([{
         result.mdpiSize = constants.defaultMdpi;
     }
 
-    const fileName = path.join(__dirname, result.imageName + result.extension);
+    var fileNameArray = [];
 
+    if (result.imageName == null || result.imageName === '') {
+        fileNameArray = fs.readdirSync(imagesDir);
+    } else {
+        fileNameArray.push(path.join(__dirname, imagesDir + result.imageName + result.extension));
+    }
+
+    finalResult = result;
+
+    async.forEachSeries(fileNameArray, iteratorFile,
+        doneIteratingFile);
+});
+
+var iteratorFile = function(fileName, done) {
+    console.log('Now processing file ' + fileName);
     var xxxhdpiWriteDir = path.join(__dirname, xxxhdpiDir);
-    xxxhdpiWriteDir = path.join(xxxhdpiWriteDir, result.imageName + result.extension);
-    gm(fileName).resize(result.xxxhdpiSize, result.xxxhdpiSize).noProfile()
+    xxxhdpiWriteDir = path.join(xxxhdpiWriteDir, fileName);
+    var requiredFile = path.join(imagesDir, fileName);
+    gm(requiredFile).resize(finalResult.xxxhdpiSize, finalResult.xxxhdpiSize).noProfile()
         .write(xxxhdpiWriteDir, function(err) {
             if (!err) {
-                console.log('Success');
+                console.log('Success xxxhdpi');
+                var xxhdpiWriteDir = path.join(__dirname, xxhdpiDir);
+                xxhdpiWriteDir = path.join(xxhdpiWriteDir, fileName);
+                gm(requiredFile).resize(finalResult.xxhdpiSize, finalResult.xxhdpiSize).noProfile()
+                    .write(xxhdpiWriteDir, function(err) {
+                        if (!err) {
+                            console.log('Success xxhdpi');
+                            var xhdpiWriteDir = path.join(__dirname, xhdpiDir);
+                            xhdpiWriteDir = path.join(xhdpiWriteDir, fileName);
+                            gm(requiredFile).resize(finalResult.xhdpiSize, finalResult.xhdpiSize).noProfile()
+                                .write(xhdpiWriteDir, function(err) {
+                                    if (!err) {
+                                        console.log('Success xhdpi');
+                                        var hdpiWriteDir = path.join(__dirname, hdpiDir);
+                                        hdpiWriteDir = path.join(hdpiWriteDir, fileName);
+                                        gm(requiredFile).resize(finalResult.hdpiSize,
+                                           finalResult.hdpiSize).noProfile()
+                                            .write(hdpiWriteDir, function(err) {
+                                                if (!err) {
+                                                    console.log('Success hdpi');
+                                                    var mdpiWriteDir = path.join(__dirname, mdpiDir);
+                                                    mdpiWriteDir = path.join(mdpiWriteDir, fileName);
+                                                    gm(requiredFile).resize(finalResult.mdpiSize,
+                                                            finalResult.mdpiSize).noProfile()
+                                                        .write(mdpiWriteDir, function(err) {
+                                                            if (!err) {
+                                                                console.log('Success mdpi');
+                                                            } else {
+                                                                console.log('Failure mdpi');
+                                                            };
+                                                            done();
+                                                        });
+                                                } else {
+                                                    console.log('Failure hdpi');
+                                                    done();
+                                                };
+                                            });
+                                    } else {
+                                        console.log('Failure xhdpi');
+                                        done();
+                                    };
+                                });
+                        } else {
+                            console.log('Failure xxhdpi');
+                            done();
+                        };
+                    });
             } else {
-                console.log('Failure');
+                console.log('Failure xxxhdpi');
+                done();
             };
         });
+}
 
-    var xxhdpiWriteDir = path.join(__dirname, xxhdpiDir);
-    xxhdpiWriteDir = path.join(xxhdpiWriteDir, result.imageName + result.extension);
-    gm(fileName).resize(result.xxhdpiSize, result.xxhdpiSize).noProfile()
-        .write(xxhdpiWriteDir, function(err) {
-            if (!err) {
-                console.log('Success');
-            } else {
-                console.log('Failure');
-            };
-        });
-
-    var xhdpiWriteDir = path.join(__dirname, xhdpiDir);
-    xhdpiWriteDir = path.join(xhdpiWriteDir, result.imageName + result.extension);
-    gm(fileName).resize(result.xhdpiSize, result.xhdpiSize).noProfile()
-        .write(xhdpiWriteDir, function(err) {
-            if (!err) {
-                console.log('Success');
-            } else {
-                console.log('Failure');
-            };
-        });
-
-    var hdpiWriteDir = path.join(__dirname, hdpiDir);
-    hdpiWriteDir = path.join(hdpiWriteDir, result.imageName + result.extension);
-    gm(fileName).resize(result.hdpiSize, result.hdpiSize).noProfile()
-        .write(hdpiWriteDir, function(err) {
-            if (!err) {
-                console.log('Success');
-            } else {
-                console.log('Failure');
-            };
-        });
-
-    var mdpiWriteDir = path.join(__dirname, mdpiDir);
-    mdpiWriteDir = path.join(mdpiWriteDir, result.imageName + result.extension);
-    gm(fileName).resize(result.mdpiSize, result.mdpiSize).noProfile()
-        .write(mdpiWriteDir, function(err) {
-            if (!err) {
-                console.log('Success');
-            } else {
-                console.log('Failure');
-            };
-        });
-});
+var doneIteratingFile = function(err) {
+    if (err) {
+        console.log('Error = ' + err);
+    } else {
+        console.log('No Errors');
+    }
+}

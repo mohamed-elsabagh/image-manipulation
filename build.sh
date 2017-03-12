@@ -27,7 +27,8 @@ function clean {
   rm -r -f drawable-xxhdpi &&
   rm -r -f drawable-xhdpi &&
   rm -r -f drawable-hdpi &&
-  rm -r -f drawable-mdpi
+  rm -r -f drawable-mdpi &&
+	rm -r -f images
 }
 
 function run {
